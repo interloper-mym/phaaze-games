@@ -29,7 +29,7 @@ body{
     overflow-x:hidden;
 }
 
-/* texture */
+/* background layers */
 body::before{
     content:"";
     position:fixed;
@@ -40,7 +40,6 @@ body::before{
     z-index:-2;
 }
 
-/* gradient */
 body::after{
     content:"";
     position:fixed;
@@ -84,7 +83,7 @@ body::after{
     color:white;
 }
 
-/* MAIN */
+/* MAIN AREA */
 .main{
     margin-left:220px;
     padding:30px;
@@ -110,7 +109,7 @@ body::after{
     margin-top:20px;
 }
 
-/* CARD */
+/* CARDS */
 .card{
     background:rgba(21,25,34,0.9);
     border-radius:12px;
@@ -160,36 +159,28 @@ body::after{
 <!-- MAIN -->
 <div class="main">
 
+    <!-- HOME -->
     <div id="home" class="section active">
         <h1>Welcome</h1>
         <p>Select a category.</p>
     </div>
 
+    <!-- GAMES -->
     <div id="games" class="section">
         <h1>🎮 Games</h1>
         <div class="grid" id="gamesGrid"></div>
     </div>
 
+    <!-- PROXIES -->
     <div id="proxies" class="section">
         <h1>🌐 Proxies</h1>
-        <div class="grid">
-            <a class="card" href="https://example.com" target="_blank">
-                <img src="https://via.placeholder.com/300x120">
-                <h3>Proxy 1</h3>
-                <p>Open web proxy</p>
-            </a>
-        </div>
+        <div class="grid" id="proxiesGrid"></div>
     </div>
 
+    <!-- TOOLS -->
     <div id="tools" class="section">
         <h1>🛠️ Tools</h1>
-        <div class="grid">
-            <a class="card" href="#">
-                <img src="https://via.placeholder.com/300x120">
-                <h3>Calculator</h3>
-                <p>Simple tool</p>
-            </a>
-        </div>
+        <div class="grid" id="toolsGrid"></div>
     </div>
 
 </div>
@@ -202,38 +193,34 @@ function show(page){
     document.getElementById(page).classList.add("active");
 }
 
-/* ===== GAME DATA ===== */
-const games = [
-    {
-        name:"Snake",
-        desc:"Classic snake game",
-        img:"images/snake.png",
-        link:"games/snake.html"
-    },
-    {
-        name:"Tetris",
-        desc:"Block puzzle game",
-        img:"images/tetris.png",
-        link:"games/tetris.html"
-    }
-];
+/* LOAD ANY JSON */
+function loadJSON(file, gridId){
+    fetch(file)
+    .then(res => res.json())
+    .then(items => {
+        const grid = document.getElementById(gridId);
 
-/* RENDER GAMES */
-const grid = document.getElementById("gamesGrid");
+        items.forEach(item => {
+            const a = document.createElement("a");
+            a.className = "card";
+            a.href = item.link;
 
-games.forEach(g=>{
-    const a = document.createElement("a");
-    a.className="card";
-    a.href=g.link;
+            a.innerHTML = `
+                <img src="${item.img}">
+                <h3>${item.name}</h3>
+                <p>${item.desc}</p>
+            `;
 
-    a.innerHTML=`
-        <img src="${g.img}">
-        <h3>${g.name}</h3>
-        <p>${g.desc}</p>
-    `;
+            grid.appendChild(a);
+        });
+    })
+    .catch(err => console.error("Error loading", file, err));
+}
 
-    grid.appendChild(a);
-});
+/* INIT LOAD */
+loadJSON("games.json", "gamesGrid");
+loadJSON("proxies.json", "proxiesGrid");
+loadJSON("tools.json", "toolsGrid");
 </script>
 
 </body>
